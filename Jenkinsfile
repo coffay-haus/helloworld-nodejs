@@ -4,12 +4,9 @@ pipeline {
     buildDiscarder(logRotator(numToKeepStr: '2'))
     skipDefaultCheckout true
   }
-  triggers {
-    eventTrigger simpleMatch('hello-api-deploy-event')
-  }
   stages {
     stage('Test') {
-      agent { 
+      agent {
         kubernetes {
           label 'nodejs-app-pod-2'
           yamlFile 'nodejs-pod.yaml'
@@ -26,23 +23,28 @@ pipeline {
     stage('Build and Push Image') {
       when {
         beforeAgent true
+        beforeInput true
         branch 'master'
       }
       steps {
-        echo "TODO - do the thing!"
+        echo "TODO - build and push image"
       }
     }
     stage('Deploy') {
       when {
         beforeAgent true
-        beforeInput true
         branch 'master'
       }
+      options {
+        timeout(time: 60, unit: 'SECONDS') 
+      }
       input {
-        message "Should we continue?"
+        message "Should we deploy?"
+        submitter "lesteve"
+        submitterParameter "APPROVER"
       }
       steps {
-        echo "Continuing with deployment"
+        echo "Continuing with deployment - approved by ${APPROVER}"
       }
     }
   }
