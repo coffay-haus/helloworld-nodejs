@@ -32,5 +32,18 @@ pipeline {
         echo "TODO - do the thing!"
       }
     }
+    stage('Deploy') {
+      when {
+        beforeAgent true
+        beforeInput true
+        branch 'master'
+      }
+      input {
+        message "Should we continue?"
+      }
+      steps {
+        echo "Continuing with deployment"
+      }
+    }
   }
 }
